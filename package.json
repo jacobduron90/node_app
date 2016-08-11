@@ -1,0 +1,23 @@
+{
+  "name": "node_app",
+  "version": "1.0.0",
+  "description": "simple node app",
+  "main": "hello.js",
+  "dependencies": {
+    "express": "^4.14.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacobduron90/node_app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jacobduron90/node_app/issues"
+  },
+  "homepage": "https://github.com/jacobduron90/node_app"
+}
