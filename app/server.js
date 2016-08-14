@@ -23,7 +23,7 @@ app.use(bodyParser()); // get information from html forms
 
 app.use(express.static('public'));
 app.set('views', __dirname + '/views')
-app.set('view engine', 'jade')
+app.set('view engine', 'ejs')
 
 // required for passport
 app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret

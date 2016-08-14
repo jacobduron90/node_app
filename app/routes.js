@@ -7,17 +7,23 @@ module.exports = function(app, passport){
 	app.get('/login', function(req, res) {
 
         // render the page and pass in any flash data if it exists
-        res.render('login.jade', { message: req.flash('loginMessage') }); 
+        res.render('login.ejs', { message: req.flash('loginMessage') }); 
     });
+
+    app.post('/login', passport.authenticate('local-login', {
+            successRedirect: "/profile",
+            failureRedirect: "/login",
+            failureFlash: false
+    }));
 	
 	app.get('/signup', function(req, res) {
 
         // render the page and pass in any flash data if it exists
-        res.render('signup.jade', { message: req.flash('signupMessage') });
+        res.render('signup.ejs', { message: req.flash('signupMessage') });
     });
   	
   	app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.jade', {
+        res.render('profile.ejs', {
             user : req.user // get the user out of session and pass to template
         });
     });
@@ -32,6 +38,7 @@ module.exports = function(app, passport){
         failureRedirect:'/signup',
         failureFlash:true
     }));
+
 
 }
 
