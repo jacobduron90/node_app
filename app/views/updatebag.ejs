@@ -1,0 +1,61 @@
+<!-- views/login.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Enter CoffeBag</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <style>
+        body        { padding-top:80px; }
+        #page-title{
+            margin-bottom: 30px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="col-sm-12" id="page-title">
+    <h1>Coffee Entry</h1>
+</div>
+
+<% if (message.length > 0) { %>
+        <div class="alert alert-danger"><%= message %></div>
+    <% } %>
+
+<div class="col-sm-6">
+
+    <!-- LOGIN FORM -->
+    <form action="/updatebag/<%= coffeebag._id %>" method="post">
+        <div class="form-group">
+            <label>Company</label>
+            <input type="text" class="form-control" name="companyName" 
+            value='<%= coffeebag.companyName %>'>
+        </div>
+        <div class="form-group">
+            <label>Bag label
+            <input type="text" class="form-control" name="bagName"
+            value='<%= coffeebag.bagName %>'>
+        </div>
+        <div class="form-group">
+            <label>Country of origin
+            <input type="text" class="form-control" name="countryOfOrigin"
+            value='<%= coffeebag.countryOfOrigin %>'>
+        </div>
+        <div class="form-group">
+            <label>Roast
+            <input type="text" class="form-control" name="roast"
+            value='<%= coffeebag.roast %>'>
+        </div>
+
+        <button type="submit" class="btn btn-warning btn-lg">Update</button>
+    </form>
+
+    <hr>
+    <p><a href="/profile">Profile</a></p>
+
+</div>
+
+</div>
+</body>
+</html>

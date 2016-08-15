@@ -1,3 +1,5 @@
+var CoffeeBag = require("./models/coffee_bag.js");
+
 module.exports = function(app, passport){
 	
 	app.get("/", function(req, res){
@@ -23,9 +25,27 @@ module.exports = function(app, passport){
     });
   	
   	app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
-        });
+        CoffeeBag.aggregate(
+            [
+                {
+                    "$group":{
+                        "_id":"$companyName",
+                        "bagCount":{"$sum":1}
+                    }
+                }
+            ], function(err, result){
+                res.render('profile.ejs', {
+                "coffeebags": result});
+            });
+
+
+        // CoffeeBag.find({}, function(err, coffeebags){
+        //     console.log(coffeebags);
+        //     res.render('profile.ejs', {
+        //         "coffeebags": coffeebags
+        //     });
+        // });
+
     });
 		
 	app.get('/logout', function(req, res) {
@@ -38,6 +58,54 @@ module.exports = function(app, passport){
         failureRedirect:'/signup',
         failureFlash:true
     }));
+
+    app.get("/enterbag", isLoggedIn, function(req, res){
+        res.render('enterbag.ejs', {message:""});
+    });
+
+    app.post("/enterbag", isLoggedIn, function(req, res){
+        // console.log(req);
+        var newBag = new CoffeeBag();
+        newBag.companyName = req.body.companyName;
+        newBag.bagName = req.body.coffeeBag;
+        newBag.countryOfOrigin = req.body.countryOfOrigin;
+        newBag.roast = req.body.roast;
+        newBag.save(function(err){
+            if(err){
+                if(11000 === err.code){
+                    res.render('enterbag.ejs', {message:"Duplicate data"});
+                }else{
+                    throw err;
+                }
+            }else{
+                res.redirect("/profile");
+            }
+            
+        });
+    });
+
+    app.get("/updatebag/:id", isLoggedIn, function(req, res){
+        CoffeeBag.findOne({"_id": req.params.id},function(err, coffeeBag){
+            if(err)throw err;
+            
+            res.render('updatebag.ejs', {message:"", coffeebag :coffeeBag});    
+        })
+        
+    });
+
+    app.post("/updatebag/:id", isLoggedIn, function(req, res){
+        // console.log(req);
+       CoffeeBag.findById(req.params.id, function(err, coffeebag){
+            if(err) throw err;
+            coffeebag.companyName = req.body.companyName;
+            coffeebag.bagName = req.body.bagName;
+            coffeebag.countryOfOrigin = req.body.countryOfOrigin;
+            coffeebag.roast = req.body.roast;
+            coffeebag.save(function(err){
+                res.redirect("/profile");
+            })
+       });
+    });
 
 
 }

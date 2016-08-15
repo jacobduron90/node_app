@@ -20,19 +20,31 @@
     <div class="row">
 
         <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3><span class="fa fa-user"></span> Local</h3>
+        <% for(var i = 0; i < coffeebags.length; i++){ %>
+            <div class="col-sm-6">
+                <div class="well">
+                    <h3><span class="fa fa-user"></span> Local</h3>
+                        <p>
+                            <strong>Company</strong>: <%= coffeebags[i]._id %><br>
+                            <strong>Bag Count</strong>: <%= coffeebags[i].bagCount %><br>
+                        </p>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a href='/updatebag/<%= coffeebags[i]._id %>'>Edit</a>
+                        </div>
+                    </div>
 
-                    <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>email</strong>: <%= user.local.email %><br>
-                        <strong>password</strong>: <%= user.local.password %>
-                    </p>
-
+                </div>
             </div>
-        </div>
+        <% } %>
+        
 
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="/enterbag">Enter Coffee Info</a>
+
+        </div>
     </div>
 
 </div>
