@@ -76,10 +76,10 @@ module.exports = function(app, passport){
     app.post("/enterbag", isLoggedIn, function(req, res){
         // console.log(req);
         var newBag = new CoffeeBag();
-        newBag.companyName = req.body.companyName;
-        newBag.bagName = req.body.coffeeBag;
-        newBag.countryOfOrigin = req.body.countryOfOrigin;
-        newBag.roast = req.body.roast;
+        newBag.companyName = req.body.companyName.trim().toLowerCase();
+        newBag.bagName = req.body.coffeeBag.trim().toLowerCase();
+        newBag.countryOfOrigin = req.body.countryOfOrigin.trim().toLowerCase();
+        newBag.roast = req.body.roast.trim().toLowerCase();
         newBag.save(function(err){
             if(err){
                 if(11000 === err.code){
@@ -107,10 +107,10 @@ module.exports = function(app, passport){
         // console.log(req);
        CoffeeBag.findById(req.params.id, function(err, coffeebag){
             if(err) throw err;
-            coffeebag.companyName = req.body.companyName;
-            coffeebag.bagName = req.body.bagName;
-            coffeebag.countryOfOrigin = req.body.countryOfOrigin;
-            coffeebag.roast = req.body.roast;
+            coffeebag.companyName = req.body.companyName.trim().toLowerCase();
+            coffeebag.bagName = req.body.bagName.trim().toLowerCase();
+            coffeebag.countryOfOrigin = req.body.countryOfOrigin.trim().toLowerCase();
+            coffeebag.roast = req.body.roast.trim().toLowerCase();
             coffeebag.save(function(err){
                 res.redirect("/profile");
             })
