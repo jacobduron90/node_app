@@ -18,11 +18,11 @@ module.exports = function(app, passport){
             failureFlash: false
     }));
 	
-	app.get('/signup', function(req, res) {
+	// app.get('/signup', function(req, res) {
 
-        // render the page and pass in any flash data if it exists
-        res.render('signup.ejs', { message: req.flash('signupMessage') });
-    });
+ //        // render the page and pass in any flash data if it exists
+ //        res.render('signup.ejs', { message: req.flash('signupMessage') });
+ //    });
   	
   	app.get('/profile', isLoggedIn, function(req, res) {
         CoffeeBag.aggregate(
@@ -53,11 +53,11 @@ module.exports = function(app, passport){
         res.redirect('/');
     });
 
-    app.post("/signup", passport.authenticate('local-signup', {
-        successRedirect:'/profile',
-        failureRedirect:'/signup',
-        failureFlash:true
-    }));
+    // app.post("/signup", passport.authenticate('local-signup', {
+    //     successRedirect:'/profile',
+    //     failureRedirect:'/signup',
+    //     failureFlash:true
+    // }));
 
     app.get("/enterbag", isLoggedIn, function(req, res){
         res.render('enterbag.ejs', {message:""});
