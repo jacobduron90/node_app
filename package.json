@@ -15,7 +15,7 @@
     "method-override": "^2.3.6",
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.8",
-    "morgan": "node_modules/morgan",
+    "morgan": "1.7.0",
     "nodemon": "1.3.7",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0"
