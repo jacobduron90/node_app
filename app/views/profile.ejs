@@ -21,21 +21,23 @@
 
         <!-- LOCAL INFORMATION -->
         <% for(var i = 0; i < coffeebags.length; i++){ %>
-            <div class="col-sm-6">
-                <div class="well">
-                    <h3><span class="fa fa-user"></span> Local</h3>
-                        <p>
-                            <strong>Company</strong>: <%= coffeebags[i]._id %><br>
-                            <strong>Bag Count</strong>: <%= coffeebags[i].bagCount %><br>
-                        </p>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <a href='/updatebag/<%= coffeebags[i]._id %>'>Edit</a>
+            <a href="/list/<%= coffeebags[i]._id %>">
+                <div class="col-sm-6">
+                    <div class="well">
+                        <h3><span class="fa fa-user"></span> Local</h3>
+                            <p>
+                                <strong>Company</strong>: <%= coffeebags[i]._id %><br>
+                                <strong>Bag Count</strong>: <%= coffeebags[i].bagCount %><br>
+                            </p>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a href='/updatebag/<%= coffeebags[i]._id %>'>Edit</a>
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
-            </div>
+            </a>
         <% } %>
         
 

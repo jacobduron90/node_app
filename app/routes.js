@@ -117,6 +117,17 @@ module.exports = function(app, passport){
        });
     });
 
+    app.get("/list/:id", isLoggedIn, function(req,res){
+        console.log(req.params.id);
+        CoffeeBag.find({"companyName":req.params.id}, function(err, resultList){
+            if(err){
+                console.log(err);
+                throw err;
+            }
+            res.send(resultList);
+        });
+    });
+
 
 }
 
