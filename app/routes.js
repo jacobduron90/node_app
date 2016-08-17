@@ -124,8 +124,13 @@ module.exports = function(app, passport){
                 console.log(err);
                 throw err;
             }
-            res.send(resultList);
+            res.render("list.ejs", {coffeebagName:req.params.id, coffeebags:resultList});
         });
+    });
+
+    app.delete("/deletebag/:id", isLoggedIn, function(req, res){
+        console.log(req.params.id);
+        res.send("Got id " + req.params.id);
     });
 
 

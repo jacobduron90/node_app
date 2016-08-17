@@ -10,45 +10,29 @@
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
 
-    <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-    </div>
+        <div class="page-header text-center">
+            <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        </div>
 
-    <div class="row">
+        <div class="row">
 
-        <!-- LOCAL INFORMATION -->
-        <% for(var i = 0; i < coffeebags.length; i++){ %>
-            <a href="/list/<%= coffeebags[i]._id %>">
-                <div class="col-sm-6">
-                    <div class="well">
-                        <h3><span class="fa fa-user"></span> Local</h3>
-                            <p>
-                                <strong>Company</strong>: <%= coffeebags[i]._id %><br>
-                                <strong>Bag Count</strong>: <%= coffeebags[i].bagCount %><br>
-                            </p>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <a href='/updatebag/<%= coffeebags[i]._id %>'>Edit</a>
-                            </div>
+            <!-- LOCAL INFORMATION -->
+            <% for(var i = 0; i < coffeebags.length; i++){ %>
+                <a href="/list/<%= coffeebags[i]._id %>">
+                    <div class="col-sm-6">
+                        <div class="well">
+                                <h3><strong>Company</strong>: <%= coffeebags[i]._id %><br></h3>
+                                <p>
+                                    <strong>Bag Count</strong>: <%= coffeebags[i].bagCount %><br>
+                                </p>
                         </div>
-
                     </div>
-                </div>
-            </a>
-        <% } %>
-        
-
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <a href="/enterbag">Enter Coffee Info</a>
-
+                </a>
+            <% } %>
         </div>
     </div>
-
-</div>
 </body>
 </html>

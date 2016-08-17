@@ -1,0 +1,39 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+    <head>
+        <title>Node Authentication</title>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+        <style>
+            body        { padding-top:80px; word-wrap:break-word; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="page-header text-center">
+                <h1><span class="fa fa-anchor"></span> <%= coffeebagName %></h1>
+                <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+            </div>
+            <% for(var i = 0; i < coffeebags.length; i++){ %>
+                <div class="row well">
+                        <div class="col-sm-11">
+                            <a href='/updatebag/<%= coffeebags[i]._id %>'>
+                                <h3><%= coffeebags[i].bagName %></h3>
+                            </a>
+                        </div>
+                        <div class="col-sm-1">
+                                <a href='/updatebag/<%= coffeebags[i]._id %>' class="btn btn-danger">
+                                    Delete
+                                </a>
+                        </div>
+                </div>
+            <% } %>
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="/enterbag">Enter Coffee Info</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
