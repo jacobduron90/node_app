@@ -20,6 +20,8 @@ require('./config/passport')(passport); // pass passport for configuration
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.urlencoded({extended:true})); // get information from html forms
+app.use(bodyParser.json());
+app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
 app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views')
@@ -40,7 +42,7 @@ require('./routes')(app, passport); // load our routes and pass in our app and f
 
 
 
-var port = process.env.PORT || 8081;
+var port = process.env.PORT || 8080;
  app.listen(port, function() {
    console.log("Listening on " + port);
  });
