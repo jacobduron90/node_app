@@ -23,7 +23,9 @@ app.use(bodyParser.urlencoded({extended:true})); // get information from html fo
 app.use(bodyParser.json());
 app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
-app.use(express.static(__dirname + '/public'));
+var fullUrl = __dirname + '/../public/';
+console.log(fullUrl);
+app.use(express.static(fullUrl));
 app.set('views', __dirname + '/views')
 app.set('view engine', 'ejs')
 

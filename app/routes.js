@@ -1,10 +1,6 @@
 var CoffeeBag = require("./models/coffee_bag.js");
 
 module.exports = function(app, passport){
-	
-	app.get("/", function(req, res){
-		res.render('index', {title:"Home"}); // load the index.ejs file
-	});
 
 	app.get('/login', function(req, res) {
 
@@ -30,8 +26,7 @@ module.exports = function(app, passport){
                     }
                 }
             ], function(err, result){
-                res.render('profile.ejs', {
-                "coffeebags": result});
+                res.json({"coffeebags": result});
             });
 
 
@@ -83,12 +78,12 @@ module.exports = function(app, passport){
         newBag.save(function(err){
             if(err){
                 if(11000 === err.code){
-                    res.render('enterbag.ejs', {message:"Duplicate data"});
+                    res.json({"error":"Duplicate data"});
                 }else{
-                    throw err;
+                    res.send(err);
                 }
             }else{
-                res.redirect("/profile");
+                res.json(newBag);
             }
             
         });
@@ -96,9 +91,10 @@ module.exports = function(app, passport){
 
     app.get("/updatebag/:id", isLoggedIn, function(req, res){
         CoffeeBag.findOne({"_id": req.params.id},function(err, coffeeBag){
-            if(err)throw err;
-            
-            res.render('updatebag.ejs', {message:"", coffeebag :coffeeBag});    
+            if(err){
+                res.send(err);
+            }
+            res.json(coffeeBag);
         })
         
     });
@@ -106,13 +102,15 @@ module.exports = function(app, passport){
     app.post("/updatebag/:id", isLoggedIn, function(req, res){
         // console.log(req);
        CoffeeBag.findById(req.params.id, function(err, coffeebag){
-            if(err) throw err;
+            if(err){
+                res.send(err);
+            }
             coffeebag.companyName = req.body.companyName.trim().toLowerCase();
             coffeebag.bagName = req.body.bagName.trim().toLowerCase();
             coffeebag.countryOfOrigin = req.body.countryOfOrigin.trim().toLowerCase();
             coffeebag.roast = req.body.roast.trim().toLowerCase();
             coffeebag.save(function(err){
-                res.redirect("/profile");
+                res.json({"message":"success", "coffeebag":coffeebag});
             })
        });
     });
@@ -121,10 +119,9 @@ module.exports = function(app, passport){
         console.log(req.params.id);
         CoffeeBag.find({"companyName":req.params.id}, function(err, resultList){
             if(err){
-                console.log(err);
-                throw err;
+                res.send(err);
             }
-            res.render("list.ejs", {coffeebagName:req.params.id, coffeebags:resultList});
+            res.json({coffeebagName:req.params.id, coffeebags:resultList});
         });
     });
 
@@ -133,13 +130,18 @@ module.exports = function(app, passport){
         res.send("Got id " + req.params.id);
     });
 
+    app.get('*', function(req, res) {
+        res.sendFile(__dirname+'/../public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+    });
+
 
 }
 
 function isLoggedIn(req, res, next) {
 
     // if user is authenticated in the session, carry on 
-    if (req.isAuthenticated())
+    // if (req.isAuthenticated())
+    if(true)
         return next();
 
     // if they aren't redirect them to the home page

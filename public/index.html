@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html ng-app="brewnotes">
+    <head>
+         <!-- META -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+
+        <title>Brew Notes</title>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+         <!-- SPELLS -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><!-- load jquery -->
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+        <script src="./core.js"></script>
+        <style>
+            body        { padding-top:80px; }
+        </style>
+    </head>
+    <body ng-controller="mainController">
+        <div class="container">
+
+            <div class="jumbotron text-center">
+                <h1>Coffee companies <span class="label label-info">{{ bags.coffeebags.length }}</span></h1>
+            </div>
+            <div class="row">
+            <!-- LOCAL INFORMATION -->
+                <div class="companyContainer" ng-repeat="bag in bags.coffeebags">
+                    <a href="/list/{{ bag._id }}">
+                        <div class="col-sm-6">
+                            <div class="well">
+                                    <h3><strong>{{ bag._id }}</strong><br></h3>
+                                    <p>
+                                        <strong>Bag Count</strong>: {{ bag.bagCount }}<br>
+                                    </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
