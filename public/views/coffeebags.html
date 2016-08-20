@@ -1,0 +1,16 @@
+<div class="jumbotron text-center">
+    <h1>Coffee Bags</h1>
+
+    <div class="row">
+    	<div class="bag well col-sm-4 col-sm-offset-1" ng-repeat="company in companies.coffeebags">
+    		<p><a href="/company/{{ company._id }}">{{ company._id }}</a> <br>
+    			{{ company.bagCount }}
+    		</p>
+    	</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <a href="/enterbag">Enter Coffee Bag</a>
+    </div>
+</div>

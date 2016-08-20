@@ -2,13 +2,13 @@ var CoffeeBag = require("./models/coffee_bag.js");
 
 module.exports = function(app, passport){
 
-	app.get('/login', function(req, res) {
+	app.get('/api/login', function(req, res) {
 
         // render the page and pass in any flash data if it exists
         res.render('login.ejs', { message: req.flash('loginMessage') }); 
     });
 
-    app.post('/login', passport.authenticate('local-login', {
+    app.post('/api/login', passport.authenticate('local-login', {
             successRedirect: "/profile",
             failureRedirect: "/login",
             failureFlash: false
@@ -16,7 +16,7 @@ module.exports = function(app, passport){
 	
 
   	
-  	app.get('/profile', isLoggedIn, function(req, res) {
+  	app.get('/api/profile', isLoggedIn, function(req, res) {
         CoffeeBag.aggregate(
             [
                 {
@@ -39,7 +39,7 @@ module.exports = function(app, passport){
 
     });
 		
-	app.get('/logout', function(req, res) {
+	app.get('/api/logout', function(req, res) {
         req.logout();
         res.redirect('/');
     });
@@ -56,25 +56,65 @@ module.exports = function(app, passport){
     //     failureFlash:true
     // }));
 
-    app.post("/signup", function(req, res){
+    app.post("/api/signup", function(req, res){
         res.redirect("/");
     })
 
-     app.get("/signup", function(req, res){
+     app.get("/api/signup", function(req, res){
         res.redirect("/");
     })
+    //get coffee companies with count of bags
+    app.get("/api/coffeecompanies", isLoggedIn, function(req, res){
+        CoffeeBag.aggregate(
+            [
+                {
+                    "$group":{
+                        "_id":"$companyName",
+                        "bagCount":{"$sum":1}
+                    }
+                }
+            ], function(err, result){
+                res.json({"coffeebags": result});
+            });
+    });
+    //get all coffee bags
+    app.get("/api/coffeebags", isLoggedIn, function(req,res){
+        CoffeeBag.find({}, function(err, results){
+            if(err){
+                res.send(err);
+            }
+            res.json(results);
+        })
+    })
 
-    app.get("/enterbag", isLoggedIn, function(req, res){
-        res.render('enterbag.ejs', {message:""});
+    app.get("/api/coffeebagscompany/:id", isLoggedIn, function(req,res){
+        CoffeeBag.find({"companyName":req.params.id}, function(err, list){
+            if(err){
+                res.send(err);
+            }
+            res.json(list);
+        })
     });
 
-    app.post("/enterbag", isLoggedIn, function(req, res){
+    //get coffee bag by id
+    app.get("/api/coffeebags/:id", isLoggedIn, function(req, res){
+        CoffeeBag.findById(req.params.id, function(err, bags){
+            if(err){
+                res.send(err);
+            }
+            res.json(bags);
+        });
+    });
+    //create coffee bag
+    app.post("/api/coffeebags", isLoggedIn, function(req, res){
         // console.log(req);
         var newBag = new CoffeeBag();
         newBag.companyName = req.body.companyName.trim().toLowerCase();
-        newBag.bagName = req.body.coffeeBag.trim().toLowerCase();
+        newBag.bagName = req.body.bagName.trim().toLowerCase();
         newBag.countryOfOrigin = req.body.countryOfOrigin.trim().toLowerCase();
-        newBag.roast = req.body.roast.trim().toLowerCase();
+        if(req.body.roast){
+            newBag.roast = req.body.roast.trim().toLowerCase();    
+        }
         newBag.save(function(err){
             if(err){
                 if(11000 === err.code){
@@ -88,18 +128,8 @@ module.exports = function(app, passport){
             
         });
     });
-
-    app.get("/updatebag/:id", isLoggedIn, function(req, res){
-        CoffeeBag.findOne({"_id": req.params.id},function(err, coffeeBag){
-            if(err){
-                res.send(err);
-            }
-            res.json(coffeeBag);
-        })
-        
-    });
-
-    app.post("/updatebag/:id", isLoggedIn, function(req, res){
+    //update coffee bag
+    app.put("/api/coffeebags/:id", isLoggedIn, function(req, res){
         // console.log(req);
        CoffeeBag.findById(req.params.id, function(err, coffeebag){
             if(err){
@@ -115,23 +145,21 @@ module.exports = function(app, passport){
        });
     });
 
-    app.get("/list/:id", isLoggedIn, function(req,res){
-        console.log(req.params.id);
-        CoffeeBag.find({"companyName":req.params.id}, function(err, resultList){
+    //delete coffee bag
+    app.delete("/api/coffeebags/:id", isLoggedIn, function(req, res){
+        CoffeeBag.findByIdAndRemove(req.params.id, function(err){
             if(err){
                 res.send(err);
+            }else{
+                res.json({"message":"success"});
             }
-            res.json({coffeebagName:req.params.id, coffeebags:resultList});
-        });
-    });
 
-    app.delete("/deletebag/:id", isLoggedIn, function(req, res){
-        console.log(req.params.id);
-        res.send("Got id " + req.params.id);
+        })
     });
 
     app.get('*', function(req, res) {
-        res.sendFile(__dirname+'/../public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+        console.log("got randome request: " + req);
+        res.sendFile('./public/index.html', {root:__dirname+"/../"}); // load the single view file (angular will handle the page changes on the front-end)
     });
 
 

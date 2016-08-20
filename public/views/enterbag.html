@@ -1,0 +1,32 @@
+<div class="col-sm-12" id="page-title">
+    <h1>Coffee Entry {{ dmessage }}</h1>
+</div>
+
+<div class="col-sm-6">
+
+
+    <!-- LOGIN FORM -->
+    <form>
+        <div class="form-group">
+            <label>Company</label>
+            <input type="text" class="form-control" ng-model="formData.companyName">
+        </div>
+        <div class="form-group">
+            <label>Bag label
+            <input type="text" class="form-control" ng-model="formData.bagName">
+        </div>
+        <div class="form-group">
+            <label>Country of origin
+            <input type="text" class="form-control" ng-model="formData.countryOfOrigin">
+        </div>
+        <div class="form-group">
+            <label>Roast
+            <input type="text" class="form-control" ng-model="formData.roast">
+        </div>
+
+        <button type="submit" class="btn btn-warning btn-lg" ng-click="createOrUpdate()">Submit</button>
+    </form>
+
+    <hr>
+
+</div>

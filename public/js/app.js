@@ -1,0 +1,1 @@
+angular.module('CoffeeBags', ['ngRoute', 'appRoutes', 'MainCtrl', 'CoffeeBagCtrl', 'CompanyCtrl', 'EnterBagCtrl', 'CoffeeBagService']);

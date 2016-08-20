@@ -7,14 +7,14 @@ var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
-var User = require("./models/user");
+var User = require("./app/models/user");
 
 
-var configDB = require('./config/database');
+var configDB = require('./app/config/database');
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
-require('./config/passport')(passport); // pass passport for configuration
+require('./app/config/passport')(passport); // pass passport for configuration
 
 // set up our express application
 app.use(morgan('dev')); // log every request to the console
@@ -23,11 +23,9 @@ app.use(bodyParser.urlencoded({extended:true})); // get information from html fo
 app.use(bodyParser.json());
 app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
-var fullUrl = __dirname + '/../public/';
+var fullUrl = __dirname + '/public';
 console.log(fullUrl);
 app.use(express.static(fullUrl));
-app.set('views', __dirname + '/views')
-app.set('view engine', 'ejs')
 
 // required for passport
 app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
@@ -36,7 +34,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./routes')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./app/routes')(app, passport); // load our routes and pass in our app and fully configured passport
 
 
 
