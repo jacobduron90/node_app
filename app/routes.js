@@ -1,22 +1,59 @@
 var CoffeeBag = require("./models/coffee_bag.js");
+var User = require("./models/user.js");
+var jwt = require('jsonwebtoken');
+var express = require("express");
 
-module.exports = function(app, passport){
+module.exports = function(app){
+var apiRoutes = express.Router();
 
-	app.get('/api/login', function(req, res) {
+    apiRoutes.post("/authenticate", function(req, res){
+        User.findOne({"local.email" : req.body.email}, function(err, user){
+            if(err)throw err;
 
-        // render the page and pass in any flash data if it exists
-        res.render('login.ejs', { message: req.flash('loginMessage') }); 
+            if(!user){
+                res.json({ success: false, message: 'Authentication failed. User not found.' });
+            }else{
+                if(!user.validPassword(req.body.password)){
+                    res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+                }else{
+                    console.log(app.get("superSecret"));
+                    var token = jwt.sign(user, app.get("superSecret"),{
+                        expiresIn : 1440
+                    });
+
+                    res.json({
+                        success : true,
+                        message : "token generated",
+                        token : token
+                    })
+                }
+            }
+        })
     });
 
-    app.post('/api/login', passport.authenticate('local-login', {
-            successRedirect: "/profile",
-            failureRedirect: "/login",
-            failureFlash: false
-    }));
-	
+        
 
-  	
-  	app.get('/api/profile', isLoggedIn, function(req, res) {
+    apiRoutes.use(function(req, res, next){
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+        if(token){
+            jwt.verify(token, app.get('superSecret'), function(err, decoded){
+                if(err){
+                    return res.json({success:false, message:"Failed to authenticate token"});
+                }else{
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+        }else{
+            return res.status(403).send({
+                success:false,
+                message:"No token provided."
+            });
+        }
+    });
+	
+    apiRoutes.get('/profile', function(req, res) {
         CoffeeBag.aggregate(
             [
                 {
@@ -28,23 +65,15 @@ module.exports = function(app, passport){
             ], function(err, result){
                 res.json({"coffeebags": result});
             });
-
-
-        // CoffeeBag.find({}, function(err, coffeebags){
-        //     console.log(coffeebags);
-        //     res.render('profile.ejs', {
-        //         "coffeebags": coffeebags
-        //     });
-        // });
-
     });
-		
-	app.get('/api/logout', function(req, res) {
+  	
+  	
+	apiRoutes.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
     });
 
-        // app.get('/signup', function(req, res) {
+        // $dob.get('/signup', function(req, res) {
 
  //        // render the page and pass in any flash data if it exists
  //        res.render('signup.ejs', { message: req.flash('signupMessage') });
@@ -56,15 +85,15 @@ module.exports = function(app, passport){
     //     failureFlash:true
     // }));
 
-    app.post("/api/signup", function(req, res){
+    apiRoutes.post("/signup", function(req, res){
         res.redirect("/");
-    })
+    });
 
-     app.get("/api/signup", function(req, res){
+     apiRoutes.get("/signup", function(req, res){
         res.redirect("/");
-    })
+    });
     //get coffee companies with count of bags
-    app.get("/api/coffeecompanies", isLoggedIn, function(req, res){
+    apiRoutes.get("/coffeecompanies", function(req, res){
         CoffeeBag.aggregate(
             [
                 {
@@ -78,7 +107,7 @@ module.exports = function(app, passport){
             });
     });
     //get all coffee bags
-    app.get("/api/coffeebags", isLoggedIn, function(req,res){
+    apiRoutes.get("/coffeebags",function(req,res){
         CoffeeBag.find({}, function(err, results){
             if(err){
                 res.send(err);
@@ -87,7 +116,7 @@ module.exports = function(app, passport){
         })
     })
 
-    app.get("/api/coffeebagscompany/:id", isLoggedIn, function(req,res){
+    apiRoutes.get("/coffeebagscompany/:id", function(req,res){
         CoffeeBag.find({"companyName":req.params.id}, function(err, list){
             if(err){
                 res.send(err);
@@ -97,7 +126,7 @@ module.exports = function(app, passport){
     });
 
     //get coffee bag by id
-    app.get("/api/coffeebags/:id", isLoggedIn, function(req, res){
+    apiRoutes.get("/coffeebags/:id", function(req, res){
         CoffeeBag.findById(req.params.id, function(err, bags){
             if(err){
                 res.send(err);
@@ -106,7 +135,7 @@ module.exports = function(app, passport){
         });
     });
     //create coffee bag
-    app.post("/api/coffeebags", isLoggedIn, function(req, res){
+    apiRoutes.post("/coffeebags", function(req, res){
         // console.log(req);
         var newBag = new CoffeeBag();
         newBag.companyName = req.body.companyName.trim().toLowerCase();
@@ -129,7 +158,7 @@ module.exports = function(app, passport){
         });
     });
     //update coffee bag
-    app.put("/api/coffeebags/:id", isLoggedIn, function(req, res){
+    apiRoutes.put("/coffeebags/:id", function(req, res){
         // console.log(req);
        CoffeeBag.findById(req.params.id, function(err, coffeebag){
             if(err){
@@ -146,7 +175,7 @@ module.exports = function(app, passport){
     });
 
     //delete coffee bag
-    app.delete("/api/coffeebags/:id", isLoggedIn, function(req, res){
+    apiRoutes.delete("/coffeebags/:id", function(req, res){
         CoffeeBag.findByIdAndRemove(req.params.id, function(err){
             if(err){
                 res.send(err);
@@ -157,21 +186,8 @@ module.exports = function(app, passport){
         })
     });
 
-    app.get('*', function(req, res) {
-        console.log("got randome request: " + req);
-        res.sendFile('./public/index.html', {root:__dirname+"/../"}); // load the single view file (angular will handle the page changes on the front-end)
-    });
-
+    app.use("/api",apiRoutes);
 
 }
 
-function isLoggedIn(req, res, next) {
 
-    // if user is authenticated in the session, carry on 
-    // if (req.isAuthenticated())
-    if(true)
-        return next();
-
-    // if they aren't redirect them to the home page
-    res.redirect('/');
-}

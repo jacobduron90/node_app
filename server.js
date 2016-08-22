@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var mongoose = require('mongoose');
-var passport = require('passport');
+var jwt = require('jsonwebtoken');
 var flash    = require('connect-flash');
 var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -14,8 +14,6 @@ var configDB = require('./app/config/database');
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
-require('./app/config/passport')(passport); // pass passport for configuration
-
 // set up our express application
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
@@ -25,17 +23,19 @@ app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
 var fullUrl = __dirname + '/public';
 console.log(fullUrl);
+
+app.set('superSecret', configDB.secret)
 app.use(express.static(fullUrl));
 
-// required for passport
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
+
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes')(app, passport); // load our routes and pass in our app and fully configured passport
-
+var routes = require('./app/routes')(app)// load our routes
+app.get('*', function(req, res) {
+    console.log("got randome request: " + req);
+    res.sendFile('./public/index.html', {root:__dirname+"/../"}); // load the single view file (angular will handle the page changes on the front-end)
+});
 
 
 

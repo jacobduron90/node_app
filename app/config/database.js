@@ -5,5 +5,6 @@ var DB_URL = "mongodb://"+DB_USER+":"+DB_PWD+"@localhost/brewnotes";
 
 
 module.exports = {
-	"url" : DB_URL
+	"url" : DB_URL,
+	"secret" : "Ilovescotchandwhiskey"
 }
