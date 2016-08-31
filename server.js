@@ -34,7 +34,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 var routes = require('./app/routes')(app)// load our routes
 app.get('*', function(req, res) {
     console.log("got randome request: " + req);
-    res.sendFile('./public/index.html', {root:__dirname+"/../"}); // load the single view file (angular will handle the page changes on the front-end)
+    res.sendFile('./public/index.html', {root:__dirname}); // load the single view file (angular will handle the page changes on the front-end)
 });
 
 

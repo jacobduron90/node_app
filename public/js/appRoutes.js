@@ -1,6 +1,9 @@
 angular.module("appRoutes", []).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
 	$routeProvider
-
+		.when("/login", {
+			templateUrl : "../views/login.html",
+			controller : "UserController"
+		})
 		.when("/coffeebags", {
 			templateUrl:"../views/coffeebags.html",
 			controller:"CoffeeBagController"

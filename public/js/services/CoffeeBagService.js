@@ -1,6 +1,7 @@
-angular.module("CoffeeBagService", []).factory("CoffeeBag", ['$http', function($http){
+angular.module("CoffeeBagService", []).factory("CoffeeBag", ['$http','$window', function($http, $window){
 	console.log("here just saying");
     return {
+
         // call to get all nerds
         getAllBags : function() {
             return $http.get('/api/coffeebags');
