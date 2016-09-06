@@ -38,7 +38,7 @@ var apiRoutes = express.Router();
         if(token){
             jwt.verify(token, app.get('superSecret'), function(err, decoded){
                 if(err){
-                    return res.json({success:false, message:"Failed to authenticate token"});
+                    return res.status(412).json({success:false, message:"Failed to authenticate token"});
                 }else{
                     req.decoded = decoded;
                     next();
