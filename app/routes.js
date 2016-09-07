@@ -143,6 +143,9 @@ var apiRoutes = express.Router();
         if(req.body.roast){
             newBag.roast = req.body.roast.trim().toLowerCase();    
         }
+        if(req.body.photo.detailPhoto){
+            newBag.photo.detailPhoto = req.body.photo.detailPhoto;
+        }
         newBag.save(function(err){
             if(err){
                 if(11000 === err.code){
@@ -166,7 +169,12 @@ var apiRoutes = express.Router();
             coffeebag.companyName = req.body.companyName.trim().toLowerCase();
             coffeebag.bagName = req.body.bagName.trim().toLowerCase();
             coffeebag.countryOfOrigin = req.body.countryOfOrigin.trim().toLowerCase();
-            coffeebag.roast = req.body.roast.trim().toLowerCase();
+            if(req.body.roast){
+                coffeebag.roast = req.body.roast.trim().toLowerCase();    
+            }
+            if(req.body.photo.detailPhoto){
+                coffeebag.photo.detailPhoto = req.body.photo.detailPhoto;
+            }
             coffeebag.save(function(err){
                 res.json({"message":"success", "coffeebag":coffeebag});
             })

@@ -7,7 +7,10 @@ var coffeeBagSchema = mongoose.Schema({
 	countryOfOrigin:String,
 	roast: String,
 	updated_at:Date,
-	created_at:Date
+	created_at:Date,
+	photo:{
+		detailPhoto:String
+	}
 });
 
 coffeeBagSchema.index({companyName: 1, bagName:1}, {unique:true});
