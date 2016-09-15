@@ -60,6 +60,9 @@ var apiRoutes = express.Router();
             if(err){
                 res.json({"error":err});
             }
+            for(i = 0; i < result.length; i++){
+                result[i].bags = undefined;
+            }
             res.json(result);
         })
     });

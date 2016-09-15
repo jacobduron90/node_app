@@ -9,6 +9,7 @@ angular.module("CoffeeBagCtrl", []).controller("CoffeeBagController", ["$scope",
 	return coffeeservice.getCompanies()
 		.success(function(data){
 			$scope.companies = data;
+			console.log(data);
 		})
 		.error(function(data){
 			console.log("Error: " + data);
