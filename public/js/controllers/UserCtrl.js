@@ -14,7 +14,7 @@ angular.module("UserCtrl", []).controller("UserController",["$scope", "$http", "
 				console.log("Data: " + data.token);
 				$scope.isAuthenticated = true;
 				$window.localStorage.token = data.token;
-				$window.location.href = '/coffeebags';
+				$window.location.href = '/home';
 			})
 			.error(function(data, status, headers, config){
 				$scope.isAuthenticated = false;

@@ -1,25 +1,32 @@
-angular.module("EnterBagCtrl", []).controller("EnterBagController", ["$scope", "$routeParams", "$location", "CoffeeBag", function($scope, $routeParams, $location, coffeeService){
+angular.module("EnterBagCtrl", []).controller("EnterBagController", ["$scope", "$window", "$routeParams", "$location", "CoffeeBag", function($scope, $window, $routeParams, $location, coffeeService){
 	
 	$scope.formData = {};
-	if($routeParams.id){
+	
+	var coffeeBagString = $window.localStorage.bag;
+	var bag;
+	if(coffeeBagString){
+		bag = JSON.parse(coffeeBagString)
+	}
+	var companyString = $window.localStorage.company;
+	var company;
+	if(companyString){
+		company = JSON.parse(companyString);
+	}
+		
+	if(bag){
 		$scope.dmessage = "Update call";
-		coffeeService.getBagById($routeParams.id)
-			.success(function(data){
-				$scope.formData = data;
-				console.log(data);
-			})
-			.error(function(data){
-				console.log("Error: " + data);
-			});
+		$scope.formData = bag;
 	}else{
 		$scope.dmessage = "Create call";
+
 	}
 
 
 
 
 	$scope.createOrUpdate = function(){
-		if($routeParams.id){
+		$scope.formData.companyId = company._id;
+		if(bag){
 			update();
 		}else{
 			create();
@@ -27,10 +34,10 @@ angular.module("EnterBagCtrl", []).controller("EnterBagController", ["$scope", "
 	}
 
 	create = function(){
-		coffeeService.create($scope.formData)
+		coffeeService.createBag($scope.formData)
 			.success(function(data){
 				console.log(data);
-				$location.path("/company/"+$scope.formData.companyName);
+				$location.path("/company/"+company.name);
 				$scope.formData = {};
 			})
 			.error(function(data){
@@ -40,10 +47,10 @@ angular.module("EnterBagCtrl", []).controller("EnterBagController", ["$scope", "
 	}
 
 	update = function(){
-		coffeeService.updateBag($routeParams.id, $scope.formData)
+		coffeeService.updateBag(bag._id, $scope.formData)
 			.success(function(data){
 				console.log("Success: " + data);
-				$location.path("/company/"+$scope.formData.companyName);
+				$location.path("/company/"+company.name);
 				$scope.formData = {};
 			})
 			.error(function(data){

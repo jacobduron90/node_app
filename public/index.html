@@ -21,6 +21,7 @@
     <script src="js/controllers/CoffeeBagCtrl.js"></script>
     <script src="js/controllers/CompanyCtrl.js"></script>
     <script src="js/controllers/EnterBagCtrl.js"></script>
+    <script src="js/controllers/EnterCompanyCtrl.js"></script>
     <script src="js/services/CoffeeBagService.js"></script>
     <script src="js/services/AuthInterceptor.js"></script>
     <script src="js/appRoutes.js"></script>
@@ -37,7 +38,7 @@
 
             <!-- LINK TO OUR PAGES. ANGULAR HANDLES THE ROUTING HERE -->
             <ul class="nav navbar-nav">
-                <li><a href="/coffeebags">Coffee Bags</a></li>
+                <li><a href="/home">Coffee Bags</a></li>
             </ul>
             <div class="pull-right" ng-show="isAuthenticated">
                  <a ng-click="logout()">logout</a>   

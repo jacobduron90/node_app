@@ -1,16 +1,17 @@
-<div class="jumbotron text-center">
+<div ng-controller="CoffeeBagController" class="jumbotron text-center">
     <h1>Coffee Bags</h1>
 
     <div class="row">
-    	<div class="bag well col-sm-4 col-sm-offset-1" ng-repeat="company in companies.coffeebags">
-    		<p><a href="/company/{{ company._id }}">{{ company._id }}</a> <br>
-    			{{ company.bagCount }}
+    	<div class="bag well col-sm-4 col-sm-offset-1" ng-repeat="company in companies">
+    		<img ng-click="forward(company)" src="{{ company.photo.logo }}" style="width:100px; height:auto;"/>
+            <p>{{ company.name }}<br>
+    			{{ company.location }}
     		</p>
     	</div>
     </div>
 </div>
 <div class="row">
     <div class="col-sm-6">
-        <a href="/enterbag">Enter Coffee Bag</a>
+        <a href="/entercompany">Enter Coffee Company</a>
     </div>
 </div>

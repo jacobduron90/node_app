@@ -1,7 +1,10 @@
-var CoffeeBag = require("./models/coffee_bag.js");
+var Coffee = require("./models/coffee_company.js");
 var User = require("./models/user.js");
 var jwt = require('jsonwebtoken');
 var express = require("express");
+
+var CoffeeCompany = Coffee.CoffeeCompany;
+var CoffeeBag = Coffee.CoffeeBag;
 
 module.exports = function(app){
 var apiRoutes = express.Router();
@@ -52,18 +55,13 @@ var apiRoutes = express.Router();
         }
     });
 	
-    apiRoutes.get('/profile', function(req, res) {
-        CoffeeBag.aggregate(
-            [
-                {
-                    "$group":{
-                        "_id":"$companyName",
-                        "bagCount":{"$sum":1}
-                    }
-                }
-            ], function(err, result){
-                res.json({"coffeebags": result});
-            });
+    apiRoutes.get('/companies', function(req, res) {
+        CoffeeCompany.find({}, function(err, result){
+            if(err){
+                res.json({"error":err});
+            }
+            res.json(result);
+        })
     });
   	
   	
@@ -91,62 +89,47 @@ var apiRoutes = express.Router();
      apiRoutes.get("/signup", function(req, res){
         res.redirect("/");
     });
-    //get coffee companies with count of bags
-    apiRoutes.get("/coffeecompanies", function(req, res){
-        CoffeeBag.aggregate(
-            [
-                {
-                    "$group":{
-                        "_id":"$companyName",
-                        "bagCount":{"$sum":1}
-                    }
-                }
-            ], function(err, result){
-                res.json({"coffeebags": result});
-            });
-    });
+
     //get all coffee bags
-    apiRoutes.get("/coffeebags",function(req,res){
-        CoffeeBag.find({}, function(err, results){
-            if(err){
-                res.send(err);
-            }
-            res.json(results);
-        })
-    })
+    // apiRoutes.get("/coffeebags",function(req,res){
+    //     CoffeeBag.find({}, function(err, results){
+    //         if(err){
+    //             res.send(err);
+    //         }
+    //         res.json(results);
+    //     })
+    // })
 
-    apiRoutes.get("/coffeebagscompany/:id", function(req,res){
-        CoffeeBag.find({"companyName":req.params.id}, function(err, list){
-            if(err){
-                res.send(err);
-            }
-            res.json(list);
-        })
-    });
+    // apiRoutes.get("/coffeebagscompany/:id", function(req,res){
+    //     CoffeeBag.find({"companyName":req.params.id}, function(err, list){
+    //         if(err){
+    //             res.send(err);
+    //         }
+    //         res.json(list);
+    //     })
+    // });
 
-    //get coffee bag by id
-    apiRoutes.get("/coffeebags/:id", function(req, res){
-        CoffeeBag.findById(req.params.id, function(err, bags){
-            if(err){
-                res.send(err);
-            }
-            res.json(bags);
-        });
-    });
-    //create coffee bag
-    apiRoutes.post("/coffeebags", function(req, res){
-        // console.log(req);
-        var newBag = new CoffeeBag();
-        newBag.companyName = req.body.companyName.trim().toLowerCase();
-        newBag.bagName = req.body.bagName.trim().toLowerCase();
-        newBag.countryOfOrigin = req.body.countryOfOrigin.trim().toLowerCase();
-        if(req.body.roast){
-            newBag.roast = req.body.roast.trim().toLowerCase();    
+    // //get coffee bag by id
+    // apiRoutes.get("/coffeebags/:id", function(req, res){
+    //     CoffeeBag.findById(req.params.id, function(err, bags){
+    //         if(err){
+    //             res.send(err);
+    //         }
+    //         res.json(bags);
+    //     });
+    // });
+    //create coffee company
+    apiRoutes.post("/companies", function(req, res){
+        console.log(req.body);
+        var company = new CoffeeCompany();
+        company.name = req.body.companyName.trim().toLowerCase();
+        company.location = req.body.companyLocation.trim().toLowerCase();
+        company.bags = [];
+        
+        if(req.body.photo.companyLogo){
+            company.photo.logo = req.body.photo.companyLogo;
         }
-        if(req.body.photo.detailPhoto){
-            newBag.photo.detailPhoto = req.body.photo.detailPhoto;
-        }
-        newBag.save(function(err){
+        company.save(function(err){
             if(err){
                 if(11000 === err.code){
                     res.json({"error":"Duplicate data"});
@@ -154,30 +137,93 @@ var apiRoutes = express.Router();
                     res.send(err);
                 }
             }else{
-                res.json(newBag);
+                res.json(company);
             }
             
         });
     });
+
+    apiRoutes.get("/companies/:id/bags", function(req, res){
+        var id = req.params.id;
+        CoffeeCompany.findById(id, function(err, single){
+            if(err)
+                throw err;
+            console.log(single.bags);
+            res.json(single.bags);
+        });
+    });
+
+    apiRoutes.post("/coffeebags/", function(req, res){
+        CoffeeCompany.findById(req.body.companyId, function(err, coffeeCompany){
+            if(err)
+                throw err;
+            console.log(coffeeCompany);
+            var bag = new CoffeeBag();
+            bag.name = req.body.name.trim();
+            bag.countryOfOrigin = req.body.countryOfOrigin.trim();
+            if(req.body.roast){
+                bag.roast = req.body.roast.trim();
+            }
+            if(req.body.photo.detailPhoto){
+                bag.photo.detailPhoto = req.body.photo.detailPhoto.trim();
+            }
+            
+            if(!coffeeCompany.bags){
+                console.log('No bag')
+                coffeeCompany.bags = [];
+            }
+            coffeeCompany.bags.push(bag);
+            coffeeCompany.save(function(err){
+                if(err){
+                    if(11000 === err.code){
+                        res.json({"error":"Duplicate data"});
+                    }else{
+                        res.send(err);
+                    }
+                }else{
+                    res.json(bag);
+                }
+            });
+
+
+        });
+    });
+
     //update coffee bag
     apiRoutes.put("/coffeebags/:id", function(req, res){
-        // console.log(req);
-       CoffeeBag.findById(req.params.id, function(err, coffeebag){
+       CoffeeCompany.findById(req.body.companyId, function(err, coffeeCompany){
             if(err){
                 res.send(err);
             }
-            coffeebag.companyName = req.body.companyName.trim().toLowerCase();
-            coffeebag.bagName = req.body.bagName.trim().toLowerCase();
-            coffeebag.countryOfOrigin = req.body.countryOfOrigin.trim().toLowerCase();
-            if(req.body.roast){
-                coffeebag.roast = req.body.roast.trim().toLowerCase();    
+            console.log(req.body._id);
+            var needlBag;
+            for(i = 0; i < coffeeCompany.bags.length; i++){
+                if(coffeeCompany.bags[i]._id == req.body._id){
+                    var needleBag = coffeeCompany.bags[i];
+                    break;
+                }
             }
-            if(req.body.photo.detailPhoto){
-                coffeebag.photo.detailPhoto = req.body.photo.detailPhoto;
+            if(needleBag){
+                needleBag.name = req.body.name.trim();
+                needleBag.countryOfOrigin = req.body.countryOfOrigin.trim();
+                
+                if(req.body.roast){
+                    needleBag.roast = req.body.roast.trim();
+                }else{
+                    needleBag.roast = undefined;
+                }
+
+                if(req.body.photo.detailPhoto){
+                    needleBag.photo.detailPhoto = req.body.photo.detailPhoto.trim();
+                }else{
+                    needleBag.photo.detailPhoto = undefined;
+                }
+
+                coffeeCompany.save(function(err){
+                    if(err)throw err;
+                    res.json(needleBag);
+                })
             }
-            coffeebag.save(function(err){
-                res.json({"message":"success", "coffeebag":coffeebag});
-            })
        });
     });
 

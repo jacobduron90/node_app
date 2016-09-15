@@ -13,8 +13,9 @@ angular.module("AuthInterceptor", []).factory('AuthInjector', function($rootScop
 		responseError : function(rejection){
 			if(rejection.status === 401 || rejection.status === 403){
 				//handle the case the user is rejected
+				delete $window.localStorage.token;
 				console.log("failed");
-				$window.location.href = '/login';
+				$window.location.href = '/';
 			}
 			return $q.reject(rejection);
 		}
